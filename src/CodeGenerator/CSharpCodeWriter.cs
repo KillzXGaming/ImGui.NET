@@ -12,6 +12,7 @@ namespace CodeGenerator
 
         public CSharpCodeWriter(string outputPath)
         {
+            Console.WriteLine("writing " + outputPath);
             _sw = File.CreateText(outputPath);
         }
 

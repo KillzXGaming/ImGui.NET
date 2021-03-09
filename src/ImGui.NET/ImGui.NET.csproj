@@ -16,6 +16,14 @@
     <RootNamespace>ImGuiNET</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Delegates.cs" />
+    <!--<Compile Remove="Generated\ImGuiStyleMod.gen.cs" />-->
+    <Compile Remove="ImDrawList.Manual.cs" />
+    <Compile Remove="ImGuiErrorLogCallback.cs" />
+    <Compile Remove="ImGuiNative.Manual.cs" />
+    <Compile Remove="Pair.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
     <PackageReference Include="System.Buffers" Version="4.4.0" />
@@ -29,14 +37,6 @@
       <PackagePath>runtimes/win-x64/native</PackagePath>
       <Pack>true</Pack>
     </Content>
-    <Content Include="..\..\deps\cimgui\linux-x64\cimgui.so">
-      <PackagePath>runtimes/linux-x64/native/libcimgui.so</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-    <Content Include="..\..\deps\cimgui\osx-x64\cimgui.dylib">
-      <PackagePath>runtimes/osx-x64/native/libcimgui.dylib</PackagePath>
-      <Pack>true</Pack>
-    </Content>
     <Content Include="build\net40\ImGui.NET.targets">
       <PackagePath>build/net40/ImGui.NET.targets</PackagePath>
       <Pack>true</Pack>
@@ -44,5 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Generated\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Delegates.cs" />
+    <None Include="ImDrawList.Manual.cs" />
+    <None Include="ImGuiErrorLogCallback.cs" />
+    <None Include="ImGuiNative.Manual.cs" />
+    <None Include="Pair.cs" />
   </ItemGroup>
 </Project>

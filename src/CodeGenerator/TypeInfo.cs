@@ -14,7 +14,10 @@ namespace CodeGenerator
             { "ImFileHandle", "IntPtr" },
             { "ImU8", "byte" },
             { "ImS8", "sbyte" },
+            { "ImU16", "ushort" },
+            { "ImS16", "short" },
             { "ImU64", "ulong" },
+            { "ImS64", "long" },
             { "unsigned short", "ushort" },
             { "unsigned int", "uint" },
             { "ImVec2", "Vector2" },
@@ -31,8 +34,11 @@ namespace CodeGenerator
             { "ImDrawListSharedData*", "IntPtr" },
             { "ImU32", "uint" },
             { "ImDrawCallback", "IntPtr" },
+            { "ImGuiErrorLogCallback", "IntPtr" },
+            { "ImGuiInputTextCallback", "IntPtr" },
+            { "ImGuiContextHookCallback", "IntPtr" },            
             { "size_t", "uint" },
-            { "ImGuiContext*", "IntPtr" },
+            //{ "ImGuiContext*", "IntPtr" },
             { "float[2]", "Vector2*" },
             { "float[3]", "Vector3*" },
             { "float[4]", "Vector4*" },
@@ -43,6 +49,13 @@ namespace CodeGenerator
             { "ImVec2[2]", "Vector2*" },
             { "char* []", "byte**" },
             { "unsigned char[256]", "byte*"},
+            { "ImGuiTableColumnIdx", "sbyte" },
+            { "ImGuiDockRequest", "IntPtr" },
+            { "ImGuiDockNodeSettings", "IntPtr" },
+            { "ImGuiStoragePair", "IntPtr" },
+            { "ImFontBuilderIO", "IntPtr" },
+            { "ImGuiTableDrawChannelIdx", "byte"},
+            { "ImGuiSizeCallback", "IntPtr"},
         };
 
         public static readonly Dictionary<string, string> WellKnownFieldReplacements = new Dictionary<string, string>()
@@ -52,6 +65,7 @@ namespace CodeGenerator
 
         public static readonly HashSet<string> CustomDefinedTypes = new HashSet<string>()
         {
+            "ImSpan",
             "ImVector",
             "ImVec2",
             "ImVec4",
@@ -63,15 +77,22 @@ namespace CodeGenerator
             { "((void *)0)", "null" },
             { "((void*)0)", "null" },
             { "ImVec2(0,0)", "new Vector2()" },
+            { "ImVec2(0.0f,0.0f)", "new Vector2()" },
             { "ImVec2(-1,0)", "new Vector2(-1, 0)" },
             { "ImVec2(1,0)", "new Vector2(1, 0)" },
+            { "ImVec2(-FLT_MIN,0)", "new Vector2(-float.MinValue, 0)" },
             { "ImVec2(1,1)", "new Vector2(1, 1)" },
             { "ImVec2(0,1)", "new Vector2(0, 1)" },
             { "ImVec4(0,0,0,0)", "new Vector4()" },
             { "ImVec4(1,1,1,1)", "new Vector4(1, 1, 1, 1)" },
             { "ImDrawCornerFlags_All", "ImDrawCornerFlags.All" },
             { "FLT_MAX", "float.MaxValue" },
-            { "(((ImU32)(255)<<24)|((ImU32)(255)<<16)|((ImU32)(255)<<8)|((ImU32)(255)<<0))", "0xFFFFFFFF" }
+            { "(((ImU32)(255)<<24)|((ImU32)(255)<<16)|((ImU32)(255)<<8)|((ImU32)(255)<<0))", "0xFFFFFFFF" },
+            { "NULL", "null" },
+            { "ImGuiDockNodeFlags_NoResize", "ImGuiDockNodeFlags.NoResize" },
+            { "ImGuiDockNodeFlags_NoSplit", "ImGuiDockNodeFlags.NoSplit" },
+            { "ImGuiDockNodeFlags_AutoHideTabBar", "ImGuiDockNodeFlags.AutoHideTabBar" },
+
         };
 
         public static readonly Dictionary<string, string> IdentifierReplacements = new Dictionary<string, string>()
@@ -100,8 +121,7 @@ namespace CodeGenerator
         {
             "igInputText",
             "igInputTextMultiline",
-            "igCalcTextSize",
-            "igInputTextWithHint"
+            "igInputTextWithHint",
         };
     }
 }

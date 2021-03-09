@@ -19,6 +19,10 @@ namespace CodeGenerator
             if (args.Length > 0)
             {
                 outputPath = args[0];
+                if(!Path.IsPathRooted(outputPath))
+                {
+                    outputPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, outputPath));
+                }
             }
             else
             {
@@ -26,7 +30,7 @@ namespace CodeGenerator
             }
             
             var defs = new ImguiDefinitions();
-            defs.LoadFrom(AppContext.BaseDirectory);
+            defs.LoadFrom(AppContext.BaseDirectory, true);
             
             Console.WriteLine($"Outputting generated code files to {outputPath}.");
 
@@ -136,6 +140,50 @@ namespace CodeGenerator
                                 writer.WriteLine($"public ImVector<{vectorElementType}> {field.Name} => new ImVector<{vectorElementType}>(NativePtr->{field.Name});");
                             }
                         }
+                        else if (typeStr.Contains("ImSpan"))
+                        {
+                            string spanElementType = GetTypeString(field.TemplateType, false);
+
+                            if (TypeInfo.WellKnownTypes.TryGetValue(spanElementType, out string wellKnown))
+                            {
+                                spanElementType = wellKnown;
+                            }
+
+                            if (GetWrappedType(spanElementType + "*", out string wrappedElementType))
+                            {
+                                writer.WriteLine($"public ImPtrSpan<{wrappedElementType}> {field.Name} => new ImPtrSpan<{wrappedElementType}>(NativePtr->{field.Name}, Unsafe.SizeOf<{spanElementType}>());");
+                            }
+                            else
+                            {
+                                if (GetWrappedType(spanElementType, out wrappedElementType))
+                                {
+                                    spanElementType = wrappedElementType;
+                                }
+                                writer.WriteLine($"public ImSpan<{spanElementType}> {field.Name} => new ImSpan<{spanElementType}>(NativePtr->{field.Name});");
+                            }
+                        }
+                        else if (typeStr.Contains("ImPool"))
+                        {
+                            string spanElementType = GetTypeString(field.TemplateType, false);
+
+                            if (TypeInfo.WellKnownTypes.TryGetValue(spanElementType, out string wellKnown))
+                            {
+                                spanElementType = wellKnown;
+                            }
+
+                            if (GetWrappedType(spanElementType + "*", out string wrappedElementType))
+                            {
+                                writer.WriteLine($"public ImPtrSpan<{wrappedElementType}> {field.Name} => new ImPtrSpan<{wrappedElementType}>(NativePtr->{field.Name}, Unsafe.SizeOf<{spanElementType}>());");
+                            }
+                            else
+                            {
+                                if (GetWrappedType(spanElementType, out wrappedElementType))
+                                {
+                                    spanElementType = wrappedElementType;
+                                }
+                                writer.WriteLine($"public ImPool<{spanElementType}> {field.Name} => new ImPool<{spanElementType}>(NativePtr->{field.Name});");
+                            }
+                        }
                         else
                         {
                             if (typeStr.Contains("*") && !typeStr.Contains("ImVector"))
@@ -234,7 +282,7 @@ namespace CodeGenerator
                         string exportedName = overload.ExportedName;
                         if (exportedName.Contains("~")) { continue; }
                         if (exportedName.Contains("ImVector_")) { continue; }
-                        if (exportedName.Contains("ImChunkStream_")) { continue; }
+                        //if (exportedName.Contains("ImChunkStream_")) { continue; }
 
                         if (overload.Parameters.Any(tr => tr.Type.Contains('('))) { continue; } // TODO: Parse function pointer parameters.
 
@@ -351,6 +399,10 @@ namespace CodeGenerator
                     if (!variant.Used) Console.WriteLine($"Error: Variants targetting parameter {variant.Name} with type {variant.OriginalType} could not be applied to method {method.Key}.");
                 }
             }
+
+            Fixes f = new Fixes();
+            f.FixShit(outputPath);
+
         }
 
         private static bool IsStringFieldName(string name)

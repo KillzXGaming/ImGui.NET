@@ -11,16 +11,17 @@ namespace ImGuiNET
         public ImVector IdxBuffer;
         public ImVector VtxBuffer;
         public ImDrawListFlags Flags;
+        public uint _VtxCurrentIdx;
         public IntPtr _Data;
         public byte* _OwnerName;
-        public uint _VtxCurrentIdx;
         public ImDrawVert* _VtxWritePtr;
         public ushort* _IdxWritePtr;
         public ImVector _ClipRectStack;
         public ImVector _TextureIdStack;
         public ImVector _Path;
-        public ImDrawCmd _CmdHeader;
+        public ImDrawCmdHeader _CmdHeader;
         public ImDrawListSplitter _Splitter;
+        public float _FringeScale;
     }
     public unsafe partial struct ImDrawListPtr
     {
@@ -34,16 +35,17 @@ namespace ImGuiNET
         public ImVector<ushort> IdxBuffer => new ImVector<ushort>(NativePtr->IdxBuffer);
         public ImPtrVector<ImDrawVertPtr> VtxBuffer => new ImPtrVector<ImDrawVertPtr>(NativePtr->VtxBuffer, Unsafe.SizeOf<ImDrawVert>());
         public ref ImDrawListFlags Flags => ref Unsafe.AsRef<ImDrawListFlags>(&NativePtr->Flags);
+        public ref uint _VtxCurrentIdx => ref Unsafe.AsRef<uint>(&NativePtr->_VtxCurrentIdx);
         public ref IntPtr _Data => ref Unsafe.AsRef<IntPtr>(&NativePtr->_Data);
         public NullTerminatedString _OwnerName => new NullTerminatedString(NativePtr->_OwnerName);
-        public ref uint _VtxCurrentIdx => ref Unsafe.AsRef<uint>(&NativePtr->_VtxCurrentIdx);
         public ImDrawVertPtr _VtxWritePtr => new ImDrawVertPtr(NativePtr->_VtxWritePtr);
         public IntPtr _IdxWritePtr { get => (IntPtr)NativePtr->_IdxWritePtr; set => NativePtr->_IdxWritePtr = (ushort*)value; }
         public ImVector<Vector4> _ClipRectStack => new ImVector<Vector4>(NativePtr->_ClipRectStack);
         public ImVector<IntPtr> _TextureIdStack => new ImVector<IntPtr>(NativePtr->_TextureIdStack);
         public ImVector<Vector2> _Path => new ImVector<Vector2>(NativePtr->_Path);
-        public ref ImDrawCmd _CmdHeader => ref Unsafe.AsRef<ImDrawCmd>(&NativePtr->_CmdHeader);
+        public ref ImDrawCmdHeader _CmdHeader => ref Unsafe.AsRef<ImDrawCmdHeader>(&NativePtr->_CmdHeader);
         public ref ImDrawListSplitter _Splitter => ref Unsafe.AsRef<ImDrawListSplitter>(&NativePtr->_Splitter);
+        public ref float _FringeScale => ref Unsafe.AsRef<float>(&NativePtr->_FringeScale);
         public void _ClearFreeMemory()
         {
             ImGuiNative.ImDrawList__ClearFreeMemory((ImDrawList*)(NativePtr));
@@ -68,14 +70,23 @@ namespace ImGuiNET
         {
             ImGuiNative.ImDrawList__ResetForNewFrame((ImDrawList*)(NativePtr));
         }
-        public void AddBezierCurve(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, uint col, float thickness)
+        public void AddBezierCubic(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, uint col, float thickness)
         {
             int num_segments = 0;
-            ImGuiNative.ImDrawList_AddBezierCurve((ImDrawList*)(NativePtr), p1, p2, p3, p4, col, thickness, num_segments);
+            ImGuiNative.ImDrawList_AddBezierCubic((ImDrawList*)(NativePtr), p1, p2, p3, p4, col, thickness, num_segments);
         }
-        public void AddBezierCurve(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, uint col, float thickness, int num_segments)
+        public void AddBezierCubic(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, uint col, float thickness, int num_segments)
         {
-            ImGuiNative.ImDrawList_AddBezierCurve((ImDrawList*)(NativePtr), p1, p2, p3, p4, col, thickness, num_segments);
+            ImGuiNative.ImDrawList_AddBezierCubic((ImDrawList*)(NativePtr), p1, p2, p3, p4, col, thickness, num_segments);
+        }
+        public void AddBezierQuadratic(Vector2 p1, Vector2 p2, Vector2 p3, uint col, float thickness)
+        {
+            int num_segments = 0;
+            ImGuiNative.ImDrawList_AddBezierQuadratic((ImDrawList*)(NativePtr), p1, p2, p3, col, thickness, num_segments);
+        }
+        public void AddBezierQuadratic(Vector2 p1, Vector2 p2, Vector2 p3, uint col, float thickness, int num_segments)
+        {
+            ImGuiNative.ImDrawList_AddBezierQuadratic((ImDrawList*)(NativePtr), p1, p2, p3, col, thickness, num_segments);
         }
         public void AddCallback(IntPtr callback, IntPtr callback_data)
         {
@@ -121,18 +132,18 @@ namespace ImGuiNET
         {
             Vector2 uv_min = new Vector2();
             Vector2 uv_max = new Vector2(1, 1);
-            uint col = 0xFFFFFFFF;
+            uint col = 4294967295;
             ImGuiNative.ImDrawList_AddImage((ImDrawList*)(NativePtr), user_texture_id, p_min, p_max, uv_min, uv_max, col);
         }
         public void AddImage(IntPtr user_texture_id, Vector2 p_min, Vector2 p_max, Vector2 uv_min)
         {
             Vector2 uv_max = new Vector2(1, 1);
-            uint col = 0xFFFFFFFF;
+            uint col = 4294967295;
             ImGuiNative.ImDrawList_AddImage((ImDrawList*)(NativePtr), user_texture_id, p_min, p_max, uv_min, uv_max, col);
         }
         public void AddImage(IntPtr user_texture_id, Vector2 p_min, Vector2 p_max, Vector2 uv_min, Vector2 uv_max)
         {
-            uint col = 0xFFFFFFFF;
+            uint col = 4294967295;
             ImGuiNative.ImDrawList_AddImage((ImDrawList*)(NativePtr), user_texture_id, p_min, p_max, uv_min, uv_max, col);
         }
         public void AddImage(IntPtr user_texture_id, Vector2 p_min, Vector2 p_max, Vector2 uv_min, Vector2 uv_max, uint col)
@@ -145,7 +156,7 @@ namespace ImGuiNET
             Vector2 uv2 = new Vector2(1, 0);
             Vector2 uv3 = new Vector2(1, 1);
             Vector2 uv4 = new Vector2(0, 1);
-            uint col = 0xFFFFFFFF;
+            uint col = 4294967295;
             ImGuiNative.ImDrawList_AddImageQuad((ImDrawList*)(NativePtr), user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col);
         }
         public void AddImageQuad(IntPtr user_texture_id, Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, Vector2 uv1)
@@ -153,25 +164,25 @@ namespace ImGuiNET
             Vector2 uv2 = new Vector2(1, 0);
             Vector2 uv3 = new Vector2(1, 1);
             Vector2 uv4 = new Vector2(0, 1);
-            uint col = 0xFFFFFFFF;
+            uint col = 4294967295;
             ImGuiNative.ImDrawList_AddImageQuad((ImDrawList*)(NativePtr), user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col);
         }
         public void AddImageQuad(IntPtr user_texture_id, Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, Vector2 uv1, Vector2 uv2)
         {
             Vector2 uv3 = new Vector2(1, 1);
             Vector2 uv4 = new Vector2(0, 1);
-            uint col = 0xFFFFFFFF;
+            uint col = 4294967295;
             ImGuiNative.ImDrawList_AddImageQuad((ImDrawList*)(NativePtr), user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col);
         }
         public void AddImageQuad(IntPtr user_texture_id, Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, Vector2 uv1, Vector2 uv2, Vector2 uv3)
         {
             Vector2 uv4 = new Vector2(0, 1);
-            uint col = 0xFFFFFFFF;
+            uint col = 4294967295;
             ImGuiNative.ImDrawList_AddImageQuad((ImDrawList*)(NativePtr), user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col);
         }
         public void AddImageQuad(IntPtr user_texture_id, Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4)
         {
-            uint col = 0xFFFFFFFF;
+            uint col = 4294967295;
             ImGuiNative.ImDrawList_AddImageQuad((ImDrawList*)(NativePtr), user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col);
         }
         public void AddImageQuad(IntPtr user_texture_id, Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4, uint col)
@@ -330,14 +341,23 @@ namespace ImGuiNET
         {
             ImGuiNative.ImDrawList_PathArcToFast((ImDrawList*)(NativePtr), center, radius, a_min_of_12, a_max_of_12);
         }
-        public void PathBezierCurveTo(Vector2 p2, Vector2 p3, Vector2 p4)
+        public void PathBezierCubicCurveTo(Vector2 p2, Vector2 p3, Vector2 p4)
         {
             int num_segments = 0;
-            ImGuiNative.ImDrawList_PathBezierCurveTo((ImDrawList*)(NativePtr), p2, p3, p4, num_segments);
+            ImGuiNative.ImDrawList_PathBezierCubicCurveTo((ImDrawList*)(NativePtr), p2, p3, p4, num_segments);
         }
-        public void PathBezierCurveTo(Vector2 p2, Vector2 p3, Vector2 p4, int num_segments)
+        public void PathBezierCubicCurveTo(Vector2 p2, Vector2 p3, Vector2 p4, int num_segments)
         {
-            ImGuiNative.ImDrawList_PathBezierCurveTo((ImDrawList*)(NativePtr), p2, p3, p4, num_segments);
+            ImGuiNative.ImDrawList_PathBezierCubicCurveTo((ImDrawList*)(NativePtr), p2, p3, p4, num_segments);
+        }
+        public void PathBezierQuadraticCurveTo(Vector2 p2, Vector2 p3)
+        {
+            int num_segments = 0;
+            ImGuiNative.ImDrawList_PathBezierQuadraticCurveTo((ImDrawList*)(NativePtr), p2, p3, num_segments);
+        }
+        public void PathBezierQuadraticCurveTo(Vector2 p2, Vector2 p3, int num_segments)
+        {
+            ImGuiNative.ImDrawList_PathBezierQuadraticCurveTo((ImDrawList*)(NativePtr), p2, p3, num_segments);
         }
         public void PathClear()
         {

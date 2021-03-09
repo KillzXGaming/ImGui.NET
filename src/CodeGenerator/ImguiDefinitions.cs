@@ -15,13 +15,17 @@ namespace CodeGenerator
         public FunctionDefinition[] Functions;
         public Dictionary<string, MethodVariant> Variants;
 
+        public HashSet<string> excluded = new HashSet<string>() { "FindBestWindowPosForPopupEx" };
+
+        
+
         static int GetInt(JToken token, string key)
         {
             var v = token[key];
             if (v == null) return 0;
             return v.ToObject<int>();
         }
-        public void LoadFrom(string directory)
+        public void LoadFrom(string directory, bool useInternal)
         {
             
             JObject typesJson;
@@ -68,6 +72,16 @@ namespace CodeGenerator
                 if (typeLocations?[jp.Name]?.Value<string>() == "internal") {
                     return null;
                 }
+                if (typeLocations?[jp.Name]?.Value<string>().StartsWith("imgui_internal") == true && useInternal == false)
+                {
+                    return null;
+                }
+                if(jp.Name.EndsWith("Private_"))
+                {
+                    return null;
+                }
+
+
                 EnumMember[] elements = jp.Values().Select(v =>
                 {
                     return new EnumMember(v["name"].ToString(), v["value"].ToString());
@@ -80,6 +94,14 @@ namespace CodeGenerator
                 JProperty jp = (JProperty)jt;
                 string name = jp.Name;
                 if (typeLocations?[jp.Name]?.Value<string>() == "internal") {
+                    return null;
+                }
+                if (typeLocations?[jp.Name]?.Value<string>().StartsWith("imgui_internal") == true && useInternal == false)
+                {
+                    return null;
+                }
+                if (excluded.Contains(name))
+                {
                     return null;
                 }
                 TypeReference[] fields = jp.Values().Select(v =>
@@ -121,6 +143,7 @@ namespace CodeGenerator
                     }
                     if (friendlyName == null) { return null; }
                     if (val["location"]?.ToString() == "internal") return null;
+                    if (val["location"]?.ToString().StartsWith("imgui_internal") == true && useInternal == false) return null;
 
                     string exportedName = ov_cimguiname;
                     if (exportedName == null)
@@ -340,17 +363,41 @@ namespace CodeGenerator
                 }
             }
 
-            if (Type.StartsWith("ImChunkStream_"))
+            if (Type.StartsWith("ImSpan_"))
             {
                 if (Type.EndsWith("*"))
                 {
-                    Type = "ImChunkStream*";
+                    Type = "ImSpan*";
                 }
                 else
                 {
-                    Type = "ImChunkStream";
+                    Type = "ImSpan";
                 }
             }
+
+            if (Type.StartsWith("ImPool_"))
+            {
+                if (Type.EndsWith("*"))
+                {
+                    Type = "ImPool*";
+                }
+                else
+                {
+                    Type = "ImPool";
+                }
+            }
+
+            //if (Type.StartsWith("ImChunkStream_"))
+            //{
+            //    if (Type.EndsWith("*"))
+            //    {
+            //        Type = "ImChunkStream*";
+            //    }
+            //    else
+            //    {
+            //        Type = "ImChunkStream";
+            //    }
+            //}
 
             TemplateType = templateType;
             ArraySize = asize;

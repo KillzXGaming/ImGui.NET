@@ -85,6 +85,8 @@ namespace ImGuiNET
         public Vector4 TexUvLines_61;
         public Vector4 TexUvLines_62;
         public Vector4 TexUvLines_63;
+        public IntPtr* FontBuilderIO;
+        public uint FontBuilderFlags;
         public int PackIdMouseCursors;
         public int PackIdLines;
     }
@@ -111,6 +113,8 @@ namespace ImGuiNET
         public ImPtrVector<ImFontAtlasCustomRectPtr> CustomRects => new ImPtrVector<ImFontAtlasCustomRectPtr>(NativePtr->CustomRects, Unsafe.SizeOf<ImFontAtlasCustomRect>());
         public ImPtrVector<ImFontConfigPtr> ConfigData => new ImPtrVector<ImFontConfigPtr>(NativePtr->ConfigData, Unsafe.SizeOf<ImFontConfig>());
         public RangeAccessor<Vector4> TexUvLines => new RangeAccessor<Vector4>(&NativePtr->TexUvLines_0, 64);
+        public IntPtr FontBuilderIO { get => (IntPtr)NativePtr->FontBuilderIO; set => NativePtr->FontBuilderIO = (IntPtr*)value; }
+        public ref uint FontBuilderFlags => ref Unsafe.AsRef<uint>(&NativePtr->FontBuilderFlags);
         public ref int PackIdMouseCursors => ref Unsafe.AsRef<int>(&NativePtr->PackIdMouseCursors);
         public ref int PackIdLines => ref Unsafe.AsRef<int>(&NativePtr->PackIdLines);
         public int AddCustomRectFontGlyph(ImFontPtr font, ushort id, int width, int height, float advance_x)

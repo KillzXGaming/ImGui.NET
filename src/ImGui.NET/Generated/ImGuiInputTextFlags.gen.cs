@@ -23,6 +23,7 @@ namespace ImGuiNET
         NoUndoRedo = 1 << 16,
         CharsScientific = 1 << 17,
         CallbackResize = 1 << 18,
+        CallbackEdit = 1 << 19,
         Multiline = 1 << 20,
         NoMarkEdited = 1 << 21,
     }

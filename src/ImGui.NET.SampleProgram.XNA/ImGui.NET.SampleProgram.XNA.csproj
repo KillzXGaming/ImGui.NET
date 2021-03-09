@@ -15,12 +15,22 @@
 
     <ItemGroup>
         <Content Include="$(RepositoryRootDirectory)/deps/cimgui/win-x64/cimgui.dll" CopyToOutputDirectory="PreserveNewest" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/osx-x64/cimgui.dylib" />
         <Content Include="$(RepositoryRootDirectory)/deps/cimgui/osx-x64/cimgui.dylib" CopyToOutputDirectory="PreserveNewest" Link="lib%(Filename)%(Extension)" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/linux-x64/cimgui.so" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/osx-x64/cimgui.dylib" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/linux-x64/cimgui.so" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/linux-x64/cimgui.so" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/linux-x64/cimgui.so" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/linux-x64/cimgui.so" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/linux-x64/cimgui.so" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/linux-x64/cimgui.so" />
+        <Content Remove="C:\Users\Rene2\Downloads\ImGui.NET-docking\ImGui.NET-docking\/deps/cimgui/linux-x64/cimgui.so" />
         <Content Include="$(RepositoryRootDirectory)/deps/cimgui/linux-x64/cimgui.so" CopyToOutputDirectory="PreserveNewest" Link="lib%(Filename)%(Extension)" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+      <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.7.0.1708" />
     </ItemGroup>
 
 </Project>
