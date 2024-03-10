@@ -70,6 +70,20 @@ namespace ImGuiNET
         {
             ImGuiNative.ImDrawList__ResetForNewFrame((ImDrawList*)(NativePtr));
         }
+
+        public void AddText(Vector2 pos, uint col, string text_begin)
+        {
+            int text_begin_byteCount = Encoding.UTF8.GetByteCount(text_begin);
+            byte* native_text_begin = stackalloc byte[text_begin_byteCount + 1];
+            fixed (char* text_begin_ptr = text_begin)
+            {
+                int native_text_begin_offset = Encoding.UTF8.GetBytes(text_begin_ptr, text_begin.Length, native_text_begin, text_begin_byteCount);
+                native_text_begin[native_text_begin_offset] = 0;
+            }
+            byte* native_text_end = null;
+            ImGuiNative.ImDrawList_AddTextVec2(NativePtr, pos, col, native_text_begin, native_text_end);
+        }
+
         public void AddBezierCubic(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, uint col, float thickness)
         {
             int num_segments = 0;

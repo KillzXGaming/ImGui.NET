@@ -24,6 +24,7 @@ namespace ImGuiNET
         X = 19,
         Y = 20,
         Z = 21,
-        COUNT = 22,
+        CapsLock = 22,
+        COUNT = 23,
     }
 }
